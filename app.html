@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contact Form with CAPTCHA</title>
+    <style>
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      .captcha-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .captcha-image {
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 5px;
+      }
+      .captcha-refresh {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+      }
+      .error {
+        color: red;
+        margin-top: 5px;
+      }
+      .success {
+        color: green;
+        margin-top: 5px;
+      }
+      .submit-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Contact Form</h2>
+      <form id="contact-form">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="text" id="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="captcha-container">
+          <label for="captcha">CAPTCHA:</label>
+          <img id="captcha-image" src="" alt="CAPTCHA Image" class="captcha-image">
+          <span class="captcha-refresh" onclick="refreshCaptcha()">Refresh</span>
+        </div>
+        <div class="form-group">
+          <input type="text" id="captcha-input" name="captcha-input" required>
+          <input type="hidden" id="captcha-code" name="captcha-code">
+        </div>
+        <div class="error" id="error-msg"></div>
+        <div class="success" id="success-msg"></div>
+        <button type="submit" class="submit-btn">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      // Generate a random CAPTCHA code
+      function generateCaptcha() {
+        var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var captcha = "";
+        for (var i = 0; i < 6; i++) {
+          captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return captcha;
+      }
+
+      // Set the CAPTCHA image source and store the CAPTCHA code
+      function setCaptcha() {
+        var captchaCode = generateCaptcha();
+        document.getElementById("captcha-image").src =
+          "https://dummyimage.com/150x50/000/fff&text=" + captchaCode;
+        document.getElementById("captcha-code").value = captchaCode;
+      }
+
+      // Refresh the CAPTCHA image
+      function refreshCaptcha() {
+        setCaptcha();
+      }
+
+      // Handle form submission
+      document.getElementById("contact-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        var captchaInput = document.getElementById("captcha-input").value;
+        var captchaCode = document.getElementById("captcha-code").value;
+        var errorDiv = document.getElementById("error-msg");
+        var successDiv = document.getElementById("success-msg");
+
+        // Check if the entered CAPTCHA code matches the generated one
+        if (captchaInput === captchaCode) {
+          // Perform form submission here
+          // You can add your code to send the form data to the server
+
+          // Clear form inputs and display success message
+          document.getElementById("name").value = "";
+          document.getElementById("email").value = "";
+          document.getElementById("message").value = "";
+          document.getElementById("captcha-input").value = "";
+          successDiv.innerHTML = "Form submitted successfully!";
+          errorDiv.innerHTML = "";
+        } else {
+          // Display error message if CAPTCHA code doesn't match
+          successDiv.innerHTML = "";
+          errorDiv.innerHTML = "Invalid CAPTCHA code. Please try again.";
+          refreshCaptcha();
+        }
+      });
+
+      // Set the initial CAPTCHA image on page load
+      setCaptcha();
+    </script>
+  </body>
+</html>
